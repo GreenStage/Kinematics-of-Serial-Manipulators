@@ -1,6 +1,6 @@
-#
-from math import cos,sin,atan2,sqrt
+
 from frame import Frame
+from axis import Axis
 from matrices import Matrices
 import warnings
 import json
@@ -17,10 +17,15 @@ def direct_kinetics (*angles,**frame_file):
     with open(filename) as input:
         data = json.load(input)
 
-        if data['dof']:
-            dof = data['dof']
+        dof = data.pop('dof',6) #6 dof by default
 
         frames_prototype = data['frames']
+
+        if not frames_prototype:
+            raise Exception('No frames in file')
+
+        convention = data.pop('convention','xyz')
+
         for prototype in frames_prototype:
             frames.append(Frame(prototype['displacement'],prototype['previous_relation']))
     
@@ -32,7 +37,6 @@ def direct_kinetics (*angles,**frame_file):
         warn = "Degrees of freedom are less than the DoF in the imported file,"+repr(len(angles) - dof)+" angles will be ignored."
         warnings.warn(warn)
         frames = frames[:dof]
-    
 
     for i in range(0,6):
         frames[i].rotate_joint_z(angles[i])
@@ -42,35 +46,23 @@ def direct_kinetics (*angles,**frame_file):
 
     p = final_position_m
 
-    beta = atan2(sqrt( p[0][2]**2 + p[1][2]**2 ),p[2][2])
-    sinBeta = sin(beta)
-    cosBeta = cos(beta)
-
-    if sinBeta == 0 and cosBeta == 1:
-        alpha = atan2(p[1][0],p[0][0])
-        gamma = 0
-    elif sinBeta == 0 and cosBeta == -1:
-        gamma = 0   
-        alpha =  atan2(-p[1][0],-p[0][0])
-    elif sinBeta > 0:
-        alpha =  atan2(p[1][0],p[0][0])
-        gamma =  atan2(p[2][1],-p[2][0])
+    if(convention == "zyz"):
+        print("Getting euler angles for moving axis rotations Z-Y-Z")
+        retval = Axis.angles_zyz(p)
+    elif(convention == "xyz"):
+        print("Getting fixed angles for fixed rotations X-Y-Z")
+        retval = Axis.angles_xyz(p)
     else:
-        alpha =  atan2(-p[1][2],-p[0][2])
-        gamma =  atan2(-p[2][1],p[2][0])      
+        print("Invalid convention: " + convention + ", using zyz")
+        print("Getting euler angles for moving axis rotations Z-Y-Z")
+        retval = Axis.angles_zyz(p)
 
-    retval = {}
     retval['x'] = p[0][3]
     retval['y'] = p[1][3]
     retval['z'] = p[2][3]
-    retval['alpha'] = alpha
-    retval['beta'] = beta
-    retval['gamma'] = gamma
     return retval
 
 #Testing
-
-
 a = direct_kinetics(0,0,0,0,0,0,0)
 for i in a:
     print(i,a[i])

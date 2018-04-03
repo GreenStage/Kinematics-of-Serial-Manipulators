@@ -1,4 +1,5 @@
 {
+    "convention": "zyz",
     "dof": 6,
     "frames":[
       {
