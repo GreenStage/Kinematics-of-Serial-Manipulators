@@ -11,7 +11,7 @@
         ]
       },
       {
-        "displacement":[0,-35,99],
+        "displacement":[0,0,99],
         "previous_relation":[
           [0,0,-1],
           [0,1,0],
@@ -27,7 +27,7 @@
         ]
       },
       {
-        "displacement":[25,0,0],
+        "displacement":[40,0,0],
         "previous_relation":[
           [1,0,0],
           [0,0,-1],
@@ -35,7 +35,7 @@
         ]
       },
       {
-        "displacement":[0,0,140],
+        "displacement":[0,0,195],
         "previous_relation":[
           [1,0,0],
           [0,0,1],
@@ -43,7 +43,7 @@
         ]
       },
       {
-        "displacement":[0,-25,0],
+        "displacement":[0,0,0],
         "previous_relation":[
           [1,0,0],
           [0,0,-1],
