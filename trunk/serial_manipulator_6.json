@@ -13,13 +13,13 @@
       {
         "displacement":[0,0,99],
         "previous_relation":[
-          [0,0,-1],
+          [0,0,1],
           [0,1,0],
-          [1,0,0]
+          [-1,0,0]
         ]
       },
       {
-        "displacement":[120,0,0],
+        "displacement":[-120,0,0],
         "previous_relation":[
           [1,0,0],
           [0,1,0],
@@ -27,7 +27,7 @@
         ]
       },
       {
-        "displacement":[40,0,0],
+        "displacement":[-20,-40,0],
         "previous_relation":[
           [1,0,0],
           [0,0,-1],
@@ -35,7 +35,7 @@
         ]
       },
       {
-        "displacement":[0,0,195],
+        "displacement":[0,0,-195],
         "previous_relation":[
           [1,0,0],
           [0,0,1],
@@ -46,8 +46,8 @@
         "displacement":[0,0,0],
         "previous_relation":[
           [1,0,0],
-          [0,0,-1],
-          [0,1,0]
+          [0,0,1],
+          [0,-1,0]
         ]
       }
       ]

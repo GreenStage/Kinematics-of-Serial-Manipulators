@@ -1,5 +1,5 @@
 from math import cos,sin
-from matrices import Matrices
+from utils import Utils
 
 class Frame:
 
@@ -25,7 +25,7 @@ class Frame:
             [sin(self._angle ),cos(self._angle ),0],
             [0,0,1]]
 
-        self._position_m = Matrices.multiply(self._parent_relation_m,rotate_z_matrix)
+        self._position_m = Utils.multiply_matrix(self._parent_relation_m,rotate_z_matrix)
         self._position_m[0].append(self._displacement[0])
         self._position_m[1].append(self._displacement[1])
         self._position_m[2].append(self._displacement[2])

@@ -1,12 +1,13 @@
 
 from frame import Frame
 from axis import Axis
-from matrices import Matrices
+from utils import Utils
 import warnings
 import json
 
 
 pi = 3.14159265358979323846264338
+
 
 def direct_kinetics (*angles,**frame_file):
     frames = []
@@ -37,12 +38,15 @@ def direct_kinetics (*angles,**frame_file):
         warn = "Degrees of freedom are less than the DoF in the imported file,"+repr(len(angles) - dof)+" angles will be ignored."
         warnings.warn(warn)
         frames = frames[:dof]
+    
+    if len(angles) < dof:
+        raise Exception('insuficient angles')
 
     for i in range(0,6):
         frames[i].rotate_joint_z(angles[i])
 
     for i in range(0,6):
-        final_position_m = Matrices.multiply(final_position_m,frames[i].position_m)
+        final_position_m = Utils.multiply_matrix(final_position_m,frames[i].position_m)
 
     p = final_position_m
 
@@ -60,9 +64,12 @@ def direct_kinetics (*angles,**frame_file):
     retval['x'] = p[0][3]
     retval['y'] = p[1][3]
     retval['z'] = p[2][3]
+
+    for i in retval:
+        print(i,round(retval[i],4))
     return retval
 
 #Testing
-a = direct_kinetics(0,0,0,0,0,0,0)
-for i in a:
-    print(i,a[i])
+a = direct_kinetics(pi,0.0323*pi,0,0,0,0)
+
+

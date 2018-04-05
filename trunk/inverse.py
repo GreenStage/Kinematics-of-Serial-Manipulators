@@ -1,10 +1,14 @@
 from axis import Axis
 import json
 from frame import Frame
-from matrices import Matrices
-from math import atan2,cos,sin,acos,sqrt
+from utils import Utils
+from math import atan2,cos,sin,acos,sqrt,acos
+from tree import Tree
 
-pi = 3.14159265358979323846264338
+#constan values
+pi = 3.141592653590
+c = sqrt(20**2 + (195-40)**2)
+omega = atan2(195-40,20)
 
 def inverse_kinematics(x,y,z,alpha,beta,gamma,**frame_file):
     angles = {}
@@ -29,43 +33,62 @@ def inverse_kinematics(x,y,z,alpha,beta,gamma,**frame_file):
   
     T = Axis.invert_zyz(alpha,beta,gamma)
 
+    result = Tree(0)
 #compute teta1
-    angles['teta1'] = []
-    angles['teta1'].append( {
-        'value' : atan2( pos[1],pos[0] ),
-        'teta2' : [],
-        'teta3' : []
-    } )
-    
-    angles['teta1'].append( {
-        'value' : atan2( -pos[1],-pos[0] ),
-        'teta2' : [],
-        'teta3' : []
-    } )
+    result.add_child('teta1_a',atan2( pos[0],pos[1] ))
+    result.add_child('teta1_b',atan2( -pos[0],-pos[1] ))
 
 #compute teta2,teta3
 #rotate plane around z to zy for each teta1
-    for a in angles['teta1']:
-        ang = pi/2 - a['value']
+    for branch, teta1 in result.childs.items():
+        ang = - teta1.value
         p = [pos]
-        np = Matrices.multiply(p,[[cos(ang),-sin(ang),0],
+
+        #rotate plane to zy
+        np = Utils.multiply_matrix(p,[[cos(ang),-sin(ang),0],
                                       [sin(ang), cos(ang), 0],
                                       [0,        0,        1]])
-        new_p = np[0]
-        #subtract the displacement created by frame 4 - 155
-        d1 = sum(frames[2].displacement)
-        d2 = sum(frames[4].displacement) - sum(frames[3].displacement)
-        d0 = sqrt(new_p[1]**2 + new_p[2]**2)
 
-        a0 = atan2(new_p[1],new_p[2])
-        a1 = acos( (d1**2 + d0**2 - d2**2) / (2*d1*d0) )
-        a2 = acos( (d1**2 + d2**2 - d0**2) / (2*d1*d2) )
+        new_p = [np[0][0],np[0][1],np[0][2] - 99]
 
-        a['teta2'].append({'value': a0 + a2})
-        a['teta2'].append({'value': a0 - a2})
-        a['teta3'].append({'value': a1})
-        a['teta3'].append({'value': 2*pi - a1})    
+        #we got a plane
+        p_mag = Utils.magnitude(new_p)
+        #intersect circunference with radius c centered in new_p
+        #with one centered in [0,99] (due to the displacement from frame 1 to frame 2 )
+        #and with radius of 120
 
-    print(angles)
+        p2 = Utils.intersect_circunference(new_p[1],new_p[2],c,0,0,120)
 
-inverse_kinematics(170,0,150,1.3,1.2,1.4)
+        
+        teta2_a = atan2(-p2[0][0],p2[0][1])
+        teta2_b = atan2(p2[1][0],p2[1][1])
+        
+        teta2_a = teta2_a
+        teta2_b = teta2_b
+
+        teta1.add_child('teta2_a',teta2_a)
+        teta1.add_child('teta2_b',teta2_b)
+
+        i = 0
+        for branch2, teta2 in  teta1.childs.items():    
+            p2_mag = Utils.magnitude(p2[i])
+
+            print(p2_mag)
+            print(c)
+            print(p_mag)
+
+            cosalpha = -(p_mag**2 - c**2 - p2_mag**2) / (2*c*p2_mag)
+            print(cosalpha)
+
+            alpha = acos(cosalpha)
+            print(alpha)
+            print('\n')
+            teta3 = pi - alpha - omega
+
+            teta2.add_child('teta3',teta3)
+            i+=1
+       
+
+    result.print_deep()
+
+inverse_kinematics(0,-140,254,1.3,1.2,1.4)
