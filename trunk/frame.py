@@ -19,7 +19,7 @@ class Frame:
         self._parent_relation_m = parent_relation_m
 
     def rotate_joint_z(self,ang):
-        self._angle = self._angle + ang
+        self._angle = ang
 
         rotate_z_matrix = [[cos(self._angle ),-sin(self._angle ),0],
             [sin(self._angle ),cos(self._angle ),0],

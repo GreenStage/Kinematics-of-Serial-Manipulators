@@ -32,6 +32,10 @@ def inverse_kinematics(x,y,z,alpha,beta,gamma,**frame_file):
             frames.append(Frame(prototype['displacement'],prototype['previous_relation']))
   
     T = Axis.invert_zyz(alpha,beta,gamma)
+    T[0].append(x)
+    T[1].append(y)
+    T[2].append(z)
+    T.append([0,0,0,1])
 
     result = Tree(0)
 #compute teta1
@@ -87,8 +91,23 @@ def inverse_kinematics(x,y,z,alpha,beta,gamma,**frame_file):
 
             teta2.add_child('teta3',teta3)
             i+=1
-       
+
+            #wrist
+            #calculate 0->3 T
+            frames[0].rotate_joint_z(teta1.value)
+            frames[1].rotate_joint_z(teta2.value)
+            frames[2].rotate_joint_z(teta3)
+
+            T03 = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]
+
+            for frame in frames[0:3]:
+                T03 = Utils.multiply_matrix(T03,frame.position_m)
+
+            T30 = Utils.inv_4x4_matrix(T03)
+            T36 = Utils.multiply_matrix(T30,T)
+
+            print(T36)
 
     result.print_deep()
 
-inverse_kinematics(0,-140,254,1.3,1.2,1.4)
+inverse_kinematics(0,-140,254,-1.5708,1.4693,0)
