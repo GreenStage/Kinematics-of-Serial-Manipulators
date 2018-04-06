@@ -27,7 +27,7 @@
         ]
       },
       {
-        "displacement":[-20,-40,0],
+        "displacement":[0,-40,0],
         "previous_relation":[
           [1,0,0],
           [0,0,-1],

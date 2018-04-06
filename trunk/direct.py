@@ -48,28 +48,29 @@ def direct_kinetics (*angles,**frame_file):
     for i in range(0,6):
         final_position_m = Utils.multiply_matrix(final_position_m,frames[i].position_m)
 
+   
     p = final_position_m
-
+    retval = {}
     if(convention == "zyz"):
         print("Getting euler angles for moving axis rotations Z-Y-Z")
-        retval = Axis.angles_zyz(p)
+        temp = Axis.angles_zyz(p)
     elif(convention == "xyz"):
         print("Getting fixed angles for fixed rotations X-Y-Z")
-        retval = Axis.angles_xyz(p)
+        temp = Axis.angles_xyz(p)
     else:
         print("Invalid convention: " + convention + ", using zyz")
         print("Getting euler angles for moving axis rotations Z-Y-Z")
-        retval = Axis.angles_zyz(p)
+        temp = Axis.angles_zyz(p)
 
     retval['x'] = p[0][3]
     retval['y'] = p[1][3]
     retval['z'] = p[2][3]
+    retval.update(temp)
 
-    for i in retval:
-        print(i,round(retval[i],4))
     return retval
-
+    
 #Testing
-a = direct_kinetics(pi,0.0323*pi,0,0,0,0)
-
-
+a = direct_kinetics( -0.6667*pi, 0.4502*pi, 0.25*pi,-0.9149*pi,-0.3246*pi,0.8572*pi )
+for i in a:
+    print(i + ": " + str(round(a[i],4)))
+#a = direct_kinetics( pi,pi,0,pi/3,-pi/6,pi/5 )

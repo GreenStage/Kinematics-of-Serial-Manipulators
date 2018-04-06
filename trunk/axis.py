@@ -5,9 +5,8 @@ class Axis:
     def angles_zyz(p):
         beta = atan2(sqrt( p[0][2]**2 + p[1][2]**2 ),p[2][2])
         sinBeta = sin(beta)
-        cosBeta = cos(beta)
 
-        if round(sinBeta,4) == 0 and round(cosBeta,4) > 0:
+        if round(sinBeta,4) == 0:
             alpha = atan2(p[1][0],p[0][0])
             gamma = 0
         elif round(sinBeta,4) == 0 and round(cosBeta,4) < 0:
@@ -28,9 +27,9 @@ class Axis:
     @staticmethod
     def invert_zyz(alpha,beta,gamma):
         retval = [[0,0,0],[0,0,0],[0,0,0]]
-        retval[0][0] = cos(gamma) * cos(alpha) * cos(alpha) - sin(alpha) * sin(gamma)
-        retval[0][1] = - sin(gamma) * cos(alpha) * cos(alpha) - sin(alpha) * cos(gamma)
-        retval[0][2] = cos(gamma) * sin(beta)
+        retval[0][0] = cos(gamma) * cos(alpha) * cos(beta) - sin(alpha) * sin(gamma)
+        retval[0][1] = -sin(gamma) * cos(alpha) * cos(beta) - sin(alpha) * cos(gamma)
+        retval[0][2] = cos(alpha) * sin(beta)
         retval[1][0] = sin(alpha) * cos(beta) * cos(gamma) + cos(alpha) * sin(gamma)
         retval[1][1] = -sin(alpha) * cos(beta) * sin(gamma) + cos(alpha) * cos(gamma)
         retval[1][2] = sin(alpha) * sin(beta)
